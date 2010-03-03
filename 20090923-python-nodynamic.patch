@@ -1,0 +1,51 @@
+--- origsrc/fontforge-20090923/configure.in	2009-09-23 17:16:11.000000000 -0500
++++ src/fontforge-20090923/configure.in	2010-03-02 23:42:28.771357900 -0600
+@@ -1002,6 +1002,8 @@ if test "$gww_dopy" = "yes" >/dev/null 2
+   fi
+   if test "$ac_cv_lib_dl_dlopen" = "yes" >/dev/null 2>&1 ; then
+     PYLIBS="'dl'"
++  elif test "$gww_iscygwin" = "yes" >/dev/null 2>&1 ; then
++    PYLIBS="'fontforge'"
+   else
+     PYLIBS=""
+   fi
+--- origsrc/fontforge-20090923/pyhook/loadfontforge.h	2008-07-09 15:24:24.000000000 -0500
++++ src/fontforge-20090923/pyhook/loadfontforge.h	2010-03-02 23:07:24.010972500 -0600
+@@ -1,11 +1,17 @@
+ #include "Python.h"
++#include "../inc/config.h"
++#ifndef NODYNAMIC
+ #include "../inc/dynamic.h"
++#endif
+ 
+ #if defined(__Mac)
+ # undef dlopen
+ #endif
+ 
+ PyMODINIT_FUNC ENTRY_POINT(void) {
++#ifdef NODYNAMIC
++    ff_init();
++#else
+     DL_CONST void *lib;
+     void (*initer)(void);
+ 
+@@ -44,4 +50,5 @@ return;
+ return;
+     }
+     (*initer)();
++#endif
+ }
+--- origsrc/fontforge-20090923/pyhook/setup.py.in	2008-07-09 15:24:24.000000000 -0500
++++ src/fontforge-20090923/pyhook/setup.py.in	2010-03-02 23:41:41.737667700 -0600
+@@ -9,9 +9,11 @@ setup(name='fontforge',
+     ext_modules=[Extension('fontforge',['fontforgepyhook.c'],
+ 	    include_dirs=[@PYINCLUDE@],
+ 	    define_macros=[@PYDEFINES@],
++	    library_dirs=['../.libs'],
+ 	    libraries=[@PYLIBS@]),
+ 	Extension('psMat',['psMatpyhook.c'],
+ 	    include_dirs=[@PYINCLUDE@],
+ 	    define_macros=[@PYDEFINES@],
++	    library_dirs=['../.libs'],
+ 	    libraries=[@PYLIBS@])]
+     )

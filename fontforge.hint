@@ -1,0 +1,7 @@
+category: Graphics
+requires: libfontforge1 libgcc1 libiconv2 libintl8 python
+sdesc: "Font editor and converter"
+ldesc: "An outline font editor that lets you create your own postscript, 
+truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, 
+FON, NFNT) fonts, or edit existing ones. Also lets you convert one 
+format to another."

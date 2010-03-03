@@ -1,0 +1,60 @@
+--- origsrc/fontforge-20090923/configure.in	2009-09-23 17:16:11.000000000 -0500
++++ src/fontforge-20090923/configure.in	2010-03-02 23:42:28.771357900 -0600
+@@ -116,7 +116,7 @@ powerpc-*-*linux*)
+  ;;
+ *-pc-cygwin*)
+ 
+- AC_DEFINE(_BrokenBitmapImages)
++dnl AC_DEFINE(_BrokenBitmapImages)
+  AC_DEFINE(_ModKeysAutoRepeat)
+  AC_DEFINE(__CygWin,1)
+  gww_iscygwin="yes"
+@@ -124,7 +124,7 @@ powerpc-*-*linux*)
+ dnl Although present on my cygwin system the Xi library does not load
+ dnl and crashes gdb if we attempt to use it.
+ 
+- AC_DEFINE(_NO_XINPUT)
++dnl AC_DEFINE(_NO_XINPUT)
+ 
+ dnl on cygwin the file we dlopen is not the expected filename. We must
+ dnl search for a libtool .la file (libpng.la for example) to tell us
+--- origsrc/fontforge-20090923/fontforge/prefs.c	2009-09-09 17:46:55.000000000 -0500
++++ src/fontforge-20090923/fontforge/prefs.c	2010-03-02 23:35:26.062180300 -0600
+@@ -520,10 +520,8 @@ static void ProcessFileChooserPrefs(void
+ #if __CygWin
+ 	b[i++] = uc_copy("/cygdrive/c/Windows/Fonts/");
+ #endif
+-	b[i++] = uc_copy("/usr/X11R6/lib/X11/fonts/");
+-#ifndef __CygWin		/* I'm not releasing ftp support on cygwin */
++	b[i++] = uc_copy("/usr/share/fonts/");
+ 	b[i++] = uc_copy("ftp://ctan.org/pub/tex-archive/fonts/");
+-#endif
+ 	b[i++] = NULL;
+ 	GFileChooserSetBookmarks(b);
+     } else {
+--- origsrc/fontforge-20090923/fontforge/uiutil.c	2009-02-22 11:26:04.000000000 -0600
++++ src/fontforge-20090923/fontforge/uiutil.c	2010-03-02 23:39:41.349781900 -0600
+@@ -253,12 +253,10 @@ void help(char *file) {
+ 
+     if ( browser[0]=='\0' )
+ 	findbrowser();
+-#ifndef __CygWin
+     if ( browser[0]=='\0' ) {
+ 	gwwv_post_error(_("No Browser"),_("Could not find a browser. Set the BROWSER environment variable to point to one"));
+ return;
+     }
+-#endif
+ 
+     if ( strstr(file,"http://")==NULL ) {
+ 	fullspec[0] = 0;
+--- origsrc/fontforge-20090923/gutils/dynamic.c	2009-03-29 11:03:21.000000000 -0500
++++ src/fontforge-20090923/gutils/dynamic.c	2010-03-02 22:26:09.765453700 -0600
+@@ -29,7 +29,7 @@
+ 
+ /* Parse GNU .la "library" files. They give us the name to use with dlopen */
+ /* Currently only important on _Cygwin */
+-#if defined(__CygWin) && !defined(NODYNAMIC)
++#if defined(__CygWin)
+ #  include <dynamic.h>
+ #  include <stdio.h>
+ #  include <string.h>

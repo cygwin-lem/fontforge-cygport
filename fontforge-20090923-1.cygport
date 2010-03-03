@@ -1,0 +1,58 @@
+inherit python
+
+DESCRIPTION="Font creation, editing, and conversion utility"
+HOMEPAGE="http://fontforge.sourceforge.net/"
+SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}.tar.bz2"
+
+PATCH_URI="
+	20090923-cygwin.patch
+	20090923-python-nodynamic.patch
+	20090923-vpath.patch
+"
+
+# copy of old libtool macros
+DISTCLEANFILES="aclocal.m4"
+# copied over by Makefile.dynamic.in
+DIFF_EXCLUDES="Makefile.in"
+
+PKG_NAMES="${PN} lib${PN}1 lib${PN}-devel python-${PN}"
+fontforge_CONTENTS="--exclude=*.dll etc/ usr/bin/ usr/share/"
+libfontforge1_CONTENTS="usr/bin/cygfontforge-1.dll usr/bin/cygg*.dll"
+libfontforge_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
+python_fontforge_CONTENTS=${PYTHON_SITELIB#/}
+
+NO_AUTOHEADER=1
+NO_AUTOMAKE=1
+
+src_compile() {
+	cd ${S}
+	cygautoreconf
+	cd ${B}
+	# freetype-src: for truetype debugger, requires freetype internal headers
+	#               and patented bytecode interpreter
+	cygconf \
+		--enable-pyextension \
+		--with-regular-link \
+		--with-freetype-src=no \
+		"--with-python-lib=${LIBPYTHON}" \
+		ac_confdir=${S}
+	cygmake
+
+	lndirs ${S}/pyhook ${B}/pyhook
+}
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	doicon ${S}/Packaging/fontforge.png
+	domenu ${S}/Packaging/fontforge.desktop
+
+	insinto /usr/share/mime/packages
+	doins ${S}/Packaging/fontforge.xml
+
+#	cd ${T}
+#	fetch mirror://sourceforge/fontforge/${PN}_htdocs-20090914.tar.bz2
+#	dodir /usr/share/doc/${PN}
+#	tar jxf ${PN}_htdocs-20090914.tar.bz2 -C ${D}/usr/share/doc/${PN}/
+}
