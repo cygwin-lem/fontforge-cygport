@@ -6,7 +6,7 @@ SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}.tar.bz2"
 
 PATCH_URI="
 	20090923-cygwin.patch
-	20090923-python-nodynamic.patch
+	20100501-python-nodynamic.patch
 	20090923-vpath.patch
 "
 

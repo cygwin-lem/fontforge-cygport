@@ -35,17 +35,18 @@
      (*initer)();
 +#endif
  }
---- origsrc/fontforge-20090923/pyhook/setup.py.in	2008-07-09 15:24:24.000000000 -0500
-+++ src/fontforge-20090923/pyhook/setup.py.in	2010-03-02 23:41:41.737667700 -0600
-@@ -9,9 +9,11 @@ setup(name='fontforge',
-     ext_modules=[Extension('fontforge',['fontforgepyhook.c'],
- 	    include_dirs=[@PYINCLUDE@],
- 	    define_macros=[@PYDEFINES@],
-+	    library_dirs=['../.libs'],
- 	    libraries=[@PYLIBS@]),
- 	Extension('psMat',['psMatpyhook.c'],
- 	    include_dirs=[@PYINCLUDE@],
- 	    define_macros=[@PYDEFINES@],
-+	    library_dirs=['../.libs'],
- 	    libraries=[@PYLIBS@])]
-     )
+--- origsrc/fontforge-20100501/pyhook/setup.py.in	2009-12-26 17:18:05.000000000 -0600
++++ src/fontforge-20100501/pyhook/setup.py.in	2010-05-23 13:46:50.969061700 -0500
+@@ -12,10 +12,12 @@ if float(get_config_var('VERSION')) < 3:
+         ext_modules=[Extension('fontforge',['fontforgepyhook.c'],
+                 include_dirs=[@PYINCLUDE@],
+                 define_macros=[@PYDEFINES@],
++                library_dirs=['../.libs'],
+                 libraries=[@PYLIBS@]),
+             Extension('psMat',['psMatpyhook.c'],
+                 include_dirs=[@PYINCLUDE@],
+                 define_macros=[@PYDEFINES@],
++                library_dirs=['../.libs'],
+                 libraries=[@PYLIBS@])]
+         )
+ 
