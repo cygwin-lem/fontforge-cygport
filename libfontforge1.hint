@@ -1,5 +1,5 @@
 category: Graphics
-requires: libcairo2 libfontconfig1 libfreetype6 libgcc1 libgif4 libiconv2 libintl8 libjpeg7 libpango1.0_0 libpng12 libspiro0 libtiff5 libuninameslist0 libX11_6 libXft2 libXi6 libxml2 python zlib0
+requires: libcairo2 libfontconfig1 libfreetype6 libgcc1 libgif4 libiconv2 libintl8 libjpeg8 libpango1.0_0 libpng14 libspiro0 libtiff5 libuninameslist0 libX11_6 libXft2 libXi6 libxml2 python zlib0
 external-source: fontforge
 sdesc: "Font editor and converter library (runtime)"
 ldesc: "An outline font editor that lets you create your own postscript, 

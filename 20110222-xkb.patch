@@ -1,0 +1,13 @@
+libxkbui is not required for XkbQueryExtension or anything else here
+
+--- origsrc/fontforge-20110222/configure.in	2011-08-07 00:48:07.854549500 -0500
++++ src/fontforge-20110222/configure.in	2011-08-07 01:19:07.429911200 -0500
+@@ -36,7 +36,7 @@ else
+  dnl /usr/share/doc/XFree86-doc-4.2.0/Xi/lib.PS
+ 
+  AC_CHECK_LIB(Xi, XOpenDevice, X_11LIB="-lXi -lX11" ,AC_DEFINE(_NO_XINPUT), $X_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lX11 ) 
+- AC_CHECK_LIB(xkbui, XkbQueryExtension, X_11LIB="$X_11LIB -lxkbui" ,AC_DEFINE(_NO_XKB), $X_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lX11 -lm ) 
++ AC_CHECK_LIB(X11, XkbQueryExtension, ,AC_DEFINE(_NO_XKB), $X_LIBS $X_PRE_LIBS $X_EXTRA_LIBS -lm ) 
+ fi
+ 
+ gww_define_caps_for_alt="dontknow"

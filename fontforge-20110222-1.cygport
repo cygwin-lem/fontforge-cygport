@@ -1,13 +1,17 @@
+ft_v=2.4.5
+
 inherit python
 
 DESCRIPTION="Font creation, editing, and conversion utility"
 HOMEPAGE="http://fontforge.sourceforge.net/"
-SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}.tar.bz2"
+SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}.tar.bz2
+         mirror://sourceforge/freetype/freetype-${ft_v}.tar.bz2"
 
 PATCH_URI="
 	20090923-cygwin.patch
 	20100501-python-nodynamic.patch
 	20090923-vpath.patch
+	20110222-xkb.patch
 "
 
 # copy of old libtool macros
@@ -33,7 +37,7 @@ src_compile() {
 	cygconf \
 		--enable-pyextension \
 		--with-regular-link \
-		--with-freetype-src=no \
+		--with-freetype-src=${S}/../freetype-${ft_v} \
 		"--with-python-lib=${LIBPYTHON}" \
 		ac_confdir=${S}
 	cygmake

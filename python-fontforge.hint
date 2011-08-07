@@ -1,5 +1,5 @@
 category: Graphics Python
-requires: libfontforge1 libgcc1 python
+requires: libfontforge1 python
 external-source: fontforge
 sdesc: "Font editor and converter library (Python bindings)"
 ldesc: "An outline font editor that lets you create your own postscript, 

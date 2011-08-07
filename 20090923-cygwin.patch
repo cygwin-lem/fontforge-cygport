@@ -1,20 +1,18 @@
 --- origsrc/fontforge-20090923/configure.in	2009-09-23 17:16:11.000000000 -0500
 +++ src/fontforge-20090923/configure.in	2010-03-02 23:42:28.771357900 -0600
-@@ -116,7 +116,7 @@ powerpc-*-*linux*)
+@@ -116,7 +116,6 @@ powerpc-*-*linux*)
   ;;
  *-pc-cygwin*)
  
 - AC_DEFINE(_BrokenBitmapImages)
-+dnl AC_DEFINE(_BrokenBitmapImages)
   AC_DEFINE(_ModKeysAutoRepeat)
   AC_DEFINE(__CygWin,1)
   gww_iscygwin="yes"
-@@ -124,7 +124,7 @@ powerpc-*-*linux*)
+@@ -124,7 +124,6 @@ powerpc-*-*linux*)
  dnl Although present on my cygwin system the Xi library does not load
  dnl and crashes gdb if we attempt to use it.
  
 - AC_DEFINE(_NO_XINPUT)
-+dnl AC_DEFINE(_NO_XINPUT)
  
  dnl on cygwin the file we dlopen is not the expected filename. We must
  dnl search for a libtool .la file (libpng.la for example) to tell us
