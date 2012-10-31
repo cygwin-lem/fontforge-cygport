@@ -1,11 +1,20 @@
-ft_v=2.4.5
+ft_v=2.4.10
 
 inherit python
 
-DESCRIPTION="Font creation, editing, and conversion utility"
+NAME="fontforge"
+VERSION=20120731
+RELEASE=1
+CATEGORY="Graphics"
+SUMMARY="Font creation, editing, and conversion utility"
+DESCRIPTION="An outline font editor that lets you create your own postscript,
+truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
+NFNT) fonts, or edit existing ones. Also lets you convert one format to
+another."
 HOMEPAGE="http://fontforge.sourceforge.net/"
-SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}.tar.bz2
+SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}-b.tar.bz2
          mirror://sourceforge/freetype/freetype-${ft_v}.tar.bz2"
+SRC_DIR="${NAME}-${VERSION}-b"
 
 PATCH_URI="
 	20090923-cygwin.patch
@@ -21,8 +30,12 @@ DIFF_EXCLUDES="Makefile.in"
 
 PKG_NAMES="${PN} lib${PN}1 lib${PN}-devel python-${PN}"
 fontforge_CONTENTS="--exclude=*.dll etc/ usr/bin/ usr/share/"
+libfontforge1_SUMMARY="${SUMMARY% *} library (runtime)"
 libfontforge1_CONTENTS="usr/bin/cygfontforge-1.dll usr/bin/cygg*.dll"
+libfontforge_devel_SUMMARY="${SUMMARY% *} library (development)"
+libfontforge_devel_REQUIRES="libfreetype-devel libX11-devel"
 libfontforge_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
+python_fontforge_SUMMARY="${SUMMARY% *} library (Python bindings)"
 python_fontforge_CONTENTS=${PYTHON_SITELIB#/}
 
 NO_AUTOHEADER=1
@@ -33,7 +46,6 @@ src_compile() {
 	cygautoreconf
 	cd ${B}
 	# freetype-src: for truetype debugger, requires freetype internal headers
-	#               and patented bytecode interpreter
 	cygconf \
 		--enable-pyextension \
 		--with-regular-link \
@@ -49,8 +61,13 @@ src_install() {
 	cd ${B}
 	cyginstall
 
-	doicon ${S}/Packaging/fontforge.png
 	domenu ${S}/Packaging/fontforge.desktop
+
+	for dim in 16x16 22x22 24x24 32x32 48x48 scalable
+	do
+		insinto /usr/share/icons/hicolor/${dim}/apps
+		doins ${S}/Packaging/icons/${dim}/apps/fontforge.*
+	done
 
 	insinto /usr/share/mime/packages
 	doins ${S}/Packaging/fontforge.xml
@@ -60,3 +77,5 @@ src_install() {
 #	dodir /usr/share/doc/${PN}
 #	tar jxf ${PN}_htdocs-20090914.tar.bz2 -C ${D}/usr/share/doc/${PN}/
 }
+
+KEEP_LA_FILES="none"
