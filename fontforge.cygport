@@ -4,7 +4,7 @@ inherit python
 
 NAME="fontforge"
 VERSION=20120731
-RELEASE=1
+RELEASE=2
 CATEGORY="Graphics"
 SUMMARY="Font creation, editing, and conversion utility"
 DESCRIPTION="An outline font editor that lets you create your own postscript,
@@ -40,6 +40,7 @@ python_fontforge_CONTENTS=${PYTHON_SITELIB#/}
 
 NO_AUTOHEADER=1
 NO_AUTOMAKE=1
+LIBS+=" -lpng -lz"
 
 src_compile() {
 	cd ${S}
