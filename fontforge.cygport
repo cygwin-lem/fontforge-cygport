@@ -1,10 +1,10 @@
-ft_v=2.4.10
+ft_v=2.4.12
 
 inherit python
 
 NAME="fontforge"
 VERSION=20120731
-RELEASE=2
+RELEASE=3
 CATEGORY="Graphics"
 SUMMARY="Font creation, editing, and conversion utility"
 DESCRIPTION="An outline font editor that lets you create your own postscript,
@@ -12,7 +12,7 @@ truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
 NFNT) fonts, or edit existing ones. Also lets you convert one format to
 another."
 HOMEPAGE="http://fontforge.sourceforge.net/"
-SRC_URI="mirror://sourceforge/fontforge/${PN}_full-${PV}-b.tar.bz2
+SRC_URI="mirror://sourceforge/fontforge/${NAME}_full-${VERSION}-b.tar.bz2
          mirror://sourceforge/freetype/freetype-${ft_v}.tar.bz2"
 SRC_DIR="${NAME}-${VERSION}-b"
 
@@ -21,6 +21,7 @@ PATCH_URI="
 	20100501-python-nodynamic.patch
 	20090923-vpath.patch
 	20110222-xkb.patch
+	20120731-Werror-implicit.patch
 "
 
 # copy of old libtool macros
@@ -28,7 +29,7 @@ DISTCLEANFILES="aclocal.m4"
 # copied over by Makefile.dynamic.in
 DIFF_EXCLUDES="Makefile.in"
 
-PKG_NAMES="${PN} lib${PN}1 lib${PN}-devel python-${PN}"
+PKG_NAMES="${NAME} lib${NAME}1 lib${NAME}-devel python-${NAME}"
 fontforge_CONTENTS="--exclude=*.dll etc/ usr/bin/ usr/share/"
 libfontforge1_SUMMARY="${SUMMARY% *} library (runtime)"
 libfontforge1_CONTENTS="usr/bin/cygfontforge-1.dll usr/bin/cygg*.dll"
@@ -74,9 +75,9 @@ src_install() {
 	doins ${S}/Packaging/fontforge.xml
 
 #	cd ${T}
-#	fetch mirror://sourceforge/fontforge/${PN}_htdocs-20090914.tar.bz2
-#	dodir /usr/share/doc/${PN}
-#	tar jxf ${PN}_htdocs-20090914.tar.bz2 -C ${D}/usr/share/doc/${PN}/
+#	fetch mirror://sourceforge/fontforge/${NAME}_htdocs-20090914.tar.bz2
+#	dodir /usr/share/doc/${NAME}
+#	tar jxf ${NAME}_htdocs-20090914.tar.bz2 -C ${D}/usr/share/doc/${NAME}/
 }
 
 KEEP_LA_FILES="none"

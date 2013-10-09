@@ -1,8 +1,11 @@
 --- origsrc/fontforge-20090923/configure.in	2009-09-23 17:16:11.000000000 -0500
 +++ src/fontforge-20090923/configure.in	2010-03-02 23:42:28.771357900 -0600
-@@ -116,7 +116,6 @@ powerpc-*-*linux*)
+@@ -116,9 +116,8 @@ powerpc-*-*linux*)
+ *sparc*)
+  AC_DEFINE(_Keyboard,2)
   ;;
- *-pc-cygwin*)
+-*-pc-cygwin*)
++*-cygwin*)
  
 - AC_DEFINE(_BrokenBitmapImages)
   AC_DEFINE(_ModKeysAutoRepeat)
@@ -30,9 +33,37 @@
  	b[i++] = NULL;
  	GFileChooserSetBookmarks(b);
      } else {
---- origsrc/fontforge-20090923/fontforge/uiutil.c	2009-02-22 11:26:04.000000000 -0600
-+++ src/fontforge-20090923/fontforge/uiutil.c	2010-03-02 23:39:41.349781900 -0600
-@@ -253,12 +253,10 @@ void help(char *file) {
+--- origsrc/fontforge-20120731-b/fontforge/uiutil.c	2013-10-09 03:02:53.801780400 -0500
++++ src/fontforge-20120731-b/fontforge/uiutil.c	2013-10-09 04:02:50.914523400 -0500
+@@ -38,8 +38,7 @@ extern GBox _ggadget_Default_Box;
+ #define MAIN_FOREGROUND (_ggadget_Default_Box.main_foreground)
+ 
+ #if __CygWin
+-extern void cygwin_conv_to_full_posix_path(const char *win,char *unx);
+-extern void cygwin_conv_to_full_win32_path(const char *unx,char *win);
++#include <sys/cygwin.h>
+ #endif
+ 
+ char *helpdir = NULL;
+@@ -135,7 +134,7 @@ return;
+     ch = *pt; *pt='\0';
+ 
+     temp = galloc(strlen(start)+300+ (ch==0?0:strlen(pt+1)));
+-    cygwin_conv_to_full_posix_path(start,temp+1);
++    cygwin_conv_path(CCP_WIN_A_TO_POSIX, start,temp+1, sizeof(temp)-1);
+     temp[0]='"'; strcat(temp,"\" ");
+     if ( ch!='\0' )
+ 	strcat(temp,pt+1);
+@@ -178,7 +177,7 @@ static void findbrowser(void) {
+ 	strcpy(browser,getenv("BROWSER"));
+ #if __CygWin			/* Get rid of any dos style names */
+ 	if ( isalpha(browser[0]) && browser[1]==':' && browser[2]=='\\' )
+-	    cygwin_conv_to_full_posix_path(getenv("BROWSER"),browser);
++	    cygwin_conv_path(CCP_WIN_A_TO_POSIX, getenv("BROWSER"),browser,sizeof(browser));
+ 	else if ( strchr(browser,'/')==NULL ) {
+ 	    if ( strstrmatch(browser,".exe")==NULL )
+ 		strcat(browser,".exe");
+@@ -253,12 +252,10 @@ void help(char *file) {
  
      if ( browser[0]=='\0' )
  	findbrowser();
@@ -45,6 +76,15 @@
  
      if ( strstr(file,"http://")==NULL ) {
  	fullspec[0] = 0;
+@@ -348,7 +347,7 @@ return;
+ 	/*  should give it a windows file name */
+ 	char *pt, *tpt;
+ 	temp = galloc(1024);
+-	cygwin_conv_to_full_win32_path(fullspec,temp);
++	cygwin_conv_path(CCP_POSIX_TO_WIN_A,fullspec,temp,1024);
+ 	for ( pt = fullspec, tpt = temp; *tpt && pt<fullspec+sizeof(fullspec)-3; *pt++ = *tpt++ )
+ 	    if ( *tpt=='\\' )
+ 		*pt++ = '\\';
 --- origsrc/fontforge-20090923/gutils/dynamic.c	2009-03-29 11:03:21.000000000 -0500
 +++ src/fontforge-20090923/gutils/dynamic.c	2010-03-02 22:26:09.765453700 -0600
 @@ -29,7 +29,7 @@

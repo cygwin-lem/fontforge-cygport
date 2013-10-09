@@ -1,0 +1,47 @@
+Not sure if this is the right header, but it fixes these:
+
+choosericons.c: In function 'InitChooserIcons':
+choosericons.c:1407:9: error: implicit declaration of function 'TryGGadgetImageCache'
+images.c: In function 'InitToolIcons':
+images.c:12259:9: error: implicit declaration of function 'TryGGadgetImageCache'
+
+--- origsrc/fontforge-20120731-b/fontforge/images.c	2012-08-02 10:09:08.000000000 -0500
++++ src/fontforge-20120731-b/fontforge/images.c	2013-10-09 01:54:48.901137400 -0500
+@@ -25,6 +25,7 @@
+  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ #include "fontforgeui.h"
++#include "../gdraw/ggadgetP.h"
+ 
+ static GClut magnify0_clut = { 2, 0, 1,
+     { 0x0, 0xb0b0b0 } };
+--- origsrc/fontforge-20120731-b/gdraw/choosericons.c	2012-08-02 10:09:09.000000000 -0500
++++ src/fontforge-20120731-b/gdraw/choosericons.c	2013-10-09 01:43:31.756407000 -0500
+@@ -26,6 +26,7 @@
+  */
+ #include "gdraw.h"
+ #include "ggadget.h"
++#include "ggadgetP.h"
+ #include "gicons.h"
+ 
+ static uint8 textmake_data[] = {
+--- origsrc/fontforge-20120731-b/gdraw/ggadgetP.h	2012-08-02 10:09:09.000000000 -0500
++++ src/fontforge-20120731-b/gdraw/ggadgetP.h	2013-10-09 01:42:48.838952200 -0500
+@@ -547,6 +547,7 @@ extern int GBoxDrawnWidth(GWindow gw, GB
+ 
+ extern int GGadgetWithin(GGadget *g, int x, int y);
+ extern int GGadgetInnerWithin(GGadget *g, int x, int y);
++extern int TryGGadgetImageCache(GImage *image, char *name);
+ 
+ extern int GTextInfoGetWidth(GWindow base,GTextInfo *ti,FontInstance *font);
+ extern int GTextInfoGetMaxWidth(GWindow base,GTextInfo **ti,FontInstance *font);
+--- origsrc/fontforge-20120731-b/pyhook/loadfontforge.h	2013-10-09 03:02:54.047794400 -0500
++++ src/fontforge-20120731-b/pyhook/loadfontforge.h	2013-10-09 04:10:29.986780900 -0500
+@@ -10,6 +10,7 @@
+ 
+ PyMODINIT_FUNC ENTRY_POINT(void) {
+ #ifdef NODYNAMIC
++    extern void ff_init(void);
+     ff_init();
+ #else
+     DL_CONST void *lib;
