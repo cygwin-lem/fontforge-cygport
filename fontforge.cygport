@@ -1,10 +1,8 @@
-ft_v=2.4.12
-
 inherit python
 
 NAME="fontforge"
 VERSION=20120731
-RELEASE=3
+RELEASE=4
 CATEGORY="Graphics"
 SUMMARY="Font creation, editing, and conversion utility"
 DESCRIPTION="An outline font editor that lets you create your own postscript,
@@ -12,8 +10,7 @@ truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
 NFNT) fonts, or edit existing ones. Also lets you convert one format to
 another."
 HOMEPAGE="http://fontforge.sourceforge.net/"
-SRC_URI="mirror://sourceforge/fontforge/${NAME}_full-${VERSION}-b.tar.bz2
-         mirror://sourceforge/freetype/freetype-${ft_v}.tar.bz2"
+SRC_URI="mirror://sourceforge/fontforge/${NAME}_full-${VERSION}-b.tar.bz2"
 SRC_DIR="${NAME}-${VERSION}-b"
 
 PATCH_URI="
@@ -51,7 +48,7 @@ src_compile() {
 	cygconf \
 		--enable-pyextension \
 		--with-regular-link \
-		--with-freetype-src=${S}/../freetype-${ft_v} \
+		--without-freetype-bytecode \
 		"--with-python-lib=${LIBPYTHON}" \
 		ac_confdir=${S}
 	cygmake
