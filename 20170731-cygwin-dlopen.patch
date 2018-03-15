@@ -1,0 +1,11 @@
+--- origsrc/fontforge-20170731/pycontrib/gdraw/_gdraw.py	2017-07-30 16:49:01.000000000 -0500
++++ src/fontforge-20170731/pycontrib/gdraw/_gdraw.py	2018-03-15 13:31:48.450921200 -0500
+@@ -1,7 +1,7 @@
+ from ctypes import *
+ 
+ _libraries = {}
+-_libraries['libgdraw.so.5'] = CDLL('libgdraw.so.5')
++_libraries['libgdraw.so.5'] = CDLL('cyggdraw-5.dll')
+ STRING = c_char_p
+ 
+ 

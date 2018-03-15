@@ -1,0 +1,10 @@
+--- origsrc/fontforge-20170731/m4/fontforge_platform_specifics.m4	2017-07-30 16:49:01.000000000 -0500
++++ src/fontforge-20170731/m4/fontforge_platform_specifics.m4	2018-02-27 16:55:01.120046200 -0600
+@@ -83,7 +83,6 @@ AS_CASE([$host],
+ 
+    [*-pc-cygwin*],[
+ 
+-      AC_DEFINE([_BrokenBitmapImages],[1],[Platform specific stuff])
+       AC_DEFINE([_ModKeysAutoRepeat],[1],[Platform specific stuff])
+       AC_DEFINE([__CygWin],[1],[Platform specific stuff])
+ 
