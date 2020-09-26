@@ -1,8 +1,11 @@
-inherit python2
-
-NAME="fontforge"
-VERSION=20170731
+NAME=fontforge
+VERSION=20200314p70
 RELEASE=1
+
+################################
+inherit cmake
+
+################################
 CATEGORY="Graphics"
 SUMMARY="Font creation, editing, and conversion utility"
 DESCRIPTION="An outline font editor that lets you create your own postscript,
@@ -10,25 +13,196 @@ truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
 NFNT) fonts, or edit existing ones. Also lets you convert one format to
 another."
 HOMEPAGE="http://fontforge.github.io/"
-SRC_URI="https://github.com/fontforge/fontforge/releases/download/${VERSION}/fontforge-dist-${VERSION}.tar.xz"
-SRC_DIR="fontforge-2.0.${VERSION}"
-# The gtkui directory is not built, code issues therein are ignored
-PATCH_URI="
-	20170731-cygwin-features.patch
-	20170731-cygwin-no-undefined.patch
-	20170731-cygwin-xkb.patch
-	20170731-cygwin-conv-path.patch
-	20170731-cygwin-dlopen.patch
-	20170731-cygwin-fonts.patch
+
+################################
+PY_VER=3.8
+PY_VER_SHORT=${PY_VER//./}
+PY_VER_MAJOR=${PY_VER%%.*}
+echo "PY_VER: ${PY_VER}"
+echo "PY_VER_SHORT: ${PY_VER_SHORT}"
+echo "PY_VER_MAJOR: ${PY_VER_MAJOR}"
+
+################################
+## Source from a git repository
+################################
+GIT_REPO="https://github.com/fontforge/fontforge"
+declare -A GIT_COMMIT_BY_NAME=(
+  [20200314p70]=c3468cbd0320c152c0cbf762b9e2b63642d9c65f
+  [20200314]=67687b099f82022d7384c76d0e1509fcc5e938b9
+)
+GIT_COMMIT="${GIT_COMMIT_BY_NAME[${VERSION}]}"
+echo "${GIT_REPO}"
+echo "commit ${GIT_COMMIT} (${VERSION})"
+GIT_BASENAME="${GIT_REPO##*/}"
+SRC_URI="${GIT_REPO}/archive/${GIT_COMMIT}.tar.gz"
+SRC_DIR="${GIT_BASENAME}-${GIT_COMMIT}"
+
+################################
+## ABI for libfontforge
+################################
+ABI=4
+
+################################
+## Settings for CMake
+################################
+CYGCMAKE_ARGS="
+  -DCYGWIN:BOOL=ON
+  -DFONTFORGE_GIT_VERSION=${GIT_COMMIT}
+  -DBUILD_SHARED_LIBS:BOOL=ON
+  -DENABLE_DEVS:BOOL=ON
+  -DENABLE_GUI:BOOL=ON
+"
+CYGCMAKE_ARGS+="
+  -DENABLE_PYTHON_SCRIPTING:BOOL=ON
+  -DPython3_EXECUTABLE=/usr/bin/python${PY_VER}
+"
+CYGCMAKE_ARGS+="
+  -DENABLE_DOCS:BOOL=ON
+  -DENABLE_FONTFORGE_EXTRAS:BOOL=ON
+  -DENABLE_MAINTAINER_TOOLS:BOOL=ON
+  -DENABLE_TILE_PATH:BOOL=ON
+  -DENABLE_WRITE_PFM:BOOL=OFF
 "
 
-PKG_NAMES="${NAME} lib${NAME}2 lib${NAME}-devel python2-${NAME}"
-fontforge_CONTENTS="--exclude=*.dll etc/ usr/bin/ usr/share/"
-libfontforge2_SUMMARY="${SUMMARY% *} library (runtime)"
-libfontforge2_CONTENTS="usr/bin/cygfontforge*-2.dll usr/bin/cygg*.dll"
-libfontforge_devel_SUMMARY="${SUMMARY% *} library (development)"
-libfontforge_devel_REQUIRES="libfreetype-devel libX11-devel"
-libfontforge_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
-python2_fontforge_SUMMARY="${SUMMARY% *} library (Python bindings)"
-python2_fontforge_OBSOLETES="python-fontforge"
-python2_fontforge_CONTENTS=${PYTHON2_SITELIB#/}
+################################
+## Requirements for building
+################################
+BUILD_REQUIRES="\
+  pkg-config\
+  cygwin-devel\
+  gcc-fortran\
+  libtool\
+  ninja\
+\
+  libreadline-devel\
+  libintl-devel\
+  libxml2-devel\
+\
+  libiconv-devel\
+  libuninameslist-devel\
+  zlib-devel\
+  libbrotli-devel\
+  libwoff2-devel\
+\
+  libcairo-devel\
+  libspiro-devel\
+  libfreetype-devel\
+\
+  libgif-devel\
+  libjpeg-devel\
+  libpng-devel\
+  libtiff-devel\
+\
+  libX11-devel\
+  libXft-devel\
+  libXi-devel\
+\
+  libgtk3-devel\
+  libglib2.0-devel\
+  libpango1.0-devel\
+  libzmq-devel\
+\
+  python38-devel\
+  python38-zmq\
+  python38-sphinx\
+  python38-alabaster \
+"
+################################
+## Patch files
+################################
+# Patch filenames are in a default style of 'git format-patch'
+PATCH_URI=$(\
+  find -maxdepth 1 -type f -name '[0-9][0-9][0-9][0-9]-*.patch' \
+  | sort \
+)
+# Additional patches, if any
+PATCH_URI+="
+"
+
+################################
+## Contents of our packages
+################################
+# Main package
+THIS_PN="${NAME}"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_PN}_CONTENTS" "%s" "\
+  --exclude=*.dll \
+  etc/ \
+  usr/bin/ \
+  usr/share/applications/ \
+  usr/share/metainfo/ \
+"
+printf -v "${THIS_PN}_REQUIRES" "%s" "\
+"
+
+################################
+# Runtime libraries
+THIS_PN="lib${NAME}${ABI}"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (runtime)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/bin/*.dll \
+"
+printf -v "${THIS_VN}_REQUIRES" "%s" "\
+  ${NAME}-common \
+"
+
+################################
+# Devel
+THIS_PN="lib${NAME}-devel"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (devel)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/include/fontforge/ \
+  usr/lib/lib* \
+"
+printf -v "${THIS_VN}_REQUIRES" "%s" "\
+"
+
+################################
+# Common files (noarch)
+THIS_PN="${NAME}-common"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (common files)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/share/fontforge/ \
+  usr/share/icons/ \
+  usr/share/locale/ \
+  usr/share/man/ \
+  usr/share/mime/ \
+  usr/share/pixmaps/ \
+"
+
+################################
+# Documents (noarch)
+THIS_PN="${NAME}-doc"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (doc)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/share/doc/${NAME}/ \
+"
+
+################################
+# Python bindings
+THIS_PN="python${PY_VER_SHORT}-${NAME}"
+THIS_VN=${THIS_PN//-/_}
+PKG_NAMES+=" ${THIS_PN}"
+
+printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (Python ${PY_VER} bindings)"
+printf -v "${THIS_VN}_CONTENTS" "%s" "\
+  usr/lib/python${PY_VER}/ \
+"
+printf -v "${THIS_VN}_REQUIRES" "%s" "\
+"
+
+################################
