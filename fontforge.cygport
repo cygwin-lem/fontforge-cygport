@@ -1,5 +1,5 @@
 NAME=fontforge
-VERSION=20200314p70
+VERSION=20201107p2
 RELEASE=1
 
 ################################
@@ -18,24 +18,25 @@ HOMEPAGE="http://fontforge.github.io/"
 PY_VER=3.8
 PY_VER_SHORT=${PY_VER//./}
 PY_VER_MAJOR=${PY_VER%%.*}
-echo "PY_VER: ${PY_VER}"
-echo "PY_VER_SHORT: ${PY_VER_SHORT}"
-echo "PY_VER_MAJOR: ${PY_VER_MAJOR}"
 
 ################################
 ## Source from a git repository
 ################################
 GIT_REPO="https://github.com/fontforge/fontforge"
-declare -A GIT_COMMIT_BY_NAME=(
-  [20200314p70]=c3468cbd0320c152c0cbf762b9e2b63642d9c65f
-  [20200314]=67687b099f82022d7384c76d0e1509fcc5e938b9
+declare -A GIT_DATEHASH_BY_NAME=(
+  # git log --date=iso-strict --format='%cd/%H' -1
+  [20201107p2]=2020-11-21T11:22:25-08:00/68366263fe6888d019d7a0b9cb9bf43319fc4bd7
+  [20201107]=2020-11-08T07:42:58+11:00/21ad4a18fb3d4becfe566d8215eba4483b0ddc4b
+  [20200314p70]=2020-09-08T17:51:45-07:00/c3468cbd0320c152c0cbf762b9e2b63642d9c65f
+  [20200314]=2020-03-14T14:36:49+11:00/67687b099f82022d7384c76d0e1509fcc5e938b9
 )
-GIT_COMMIT="${GIT_COMMIT_BY_NAME[${VERSION}]}"
-echo "${GIT_REPO}"
-echo "commit ${GIT_COMMIT} (${VERSION})"
+REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
+REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
+REV_DATE_SHORT="${GIT_DATEHASH_BY_NAME[${VERSION}]%T*}"
 GIT_BASENAME="${GIT_REPO##*/}"
-SRC_URI="${GIT_REPO}/archive/${GIT_COMMIT}.tar.gz"
-SRC_DIR="${GIT_BASENAME}-${GIT_COMMIT}"
+SRC_URI="${GIT_REPO}/archive/${REV_HASH}.tar.gz"   # GitHub
+# SRC_URI="${GIT_REPO}/-/archive/${REV_HASH}/${NAME}-${REV_HASH}.tar.bz2" # GitLab
+SRC_DIR="${GIT_BASENAME}-${REV_HASH}"
 
 ################################
 ## ABI for libfontforge
@@ -47,7 +48,7 @@ ABI=4
 ################################
 CYGCMAKE_ARGS="
   -DCYGWIN:BOOL=ON
-  -DFONTFORGE_GIT_VERSION=${GIT_COMMIT}
+  -DFONTFORGE_GIT_VERSION=${REV_HASH}
   -DBUILD_SHARED_LIBS:BOOL=ON
   -DENABLE_DEVS:BOOL=ON
   -DENABLE_GUI:BOOL=ON
@@ -204,5 +205,25 @@ printf -v "${THIS_VN}_CONTENTS" "%s" "\
 "
 printf -v "${THIS_VN}_REQUIRES" "%s" "\
 "
+
+################################
+# Based on /usr/share/cygport/cygclass/cmake.cygclass
+src_compile() {
+	cd ${B}
+	: ${CYGCMAKE_GENERATOR=Ninja}
+	cygcmake
+	if [ -f build.ninja ]
+	then
+		# Modify '-R/usr/lib' to '-Wl,R/usr/lib' in build.ninja:
+		# >>> LINK_FLAGS = -Wl,--export-all-symbols -R/usr/lib
+		sed -e 's+\([ \t]\)\(-R/usr/lib\)+\1-Wl,\2+'\
+			< build.ninja > build.ninja.tmp
+		diff -u build.ninja build.ninja.tmp
+		mv build.ninja.tmp build.ninja
+		cygninja
+	else
+		cygmake
+	fi
+}
 
 ################################
