@@ -1,5 +1,5 @@
 NAME=fontforge
-VERSION=20201107p2
+VERSION=20201107p8
 RELEASE=1
 
 ################################
@@ -25,6 +25,7 @@ PY_VER_MAJOR=${PY_VER%%.*}
 GIT_REPO="https://github.com/fontforge/fontforge"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log --date=iso-strict --format='%cd/%H' -1
+  [20201107p8]=2020-11-29T09:04:29+11:00/7aeed0d936590093c6c4a827c6cd85c60ebabc0f
   [20201107p2]=2020-11-21T11:22:25-08:00/68366263fe6888d019d7a0b9cb9bf43319fc4bd7
   [20201107]=2020-11-08T07:42:58+11:00/21ad4a18fb3d4becfe566d8215eba4483b0ddc4b
   [20200314p70]=2020-09-08T17:51:45-07:00/c3468cbd0320c152c0cbf762b9e2b63642d9c65f
