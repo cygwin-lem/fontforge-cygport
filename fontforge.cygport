@@ -1,5 +1,5 @@
 NAME=fontforge
-VERSION=20201107p8
+VERSION=20201107p22
 RELEASE=1
 
 ################################
@@ -12,7 +12,7 @@ DESCRIPTION="An outline font editor that lets you create your own postscript,
 truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
 NFNT) fonts, or edit existing ones. Also lets you convert one format to
 another."
-HOMEPAGE="http://fontforge.github.io/"
+HOMEPAGE="https://fontforge.org/"
 
 ################################
 PY_VER=3.8
@@ -25,6 +25,7 @@ PY_VER_MAJOR=${PY_VER%%.*}
 GIT_REPO="https://github.com/fontforge/fontforge"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log --date=iso-strict --format='%cd/%H' -1
+  [20201107p22]=2021-01-12T21:12:24-05:00/2f6c806e7ed6b2093f9b95c87b1fbe0e473af4ba
   [20201107p8]=2020-11-29T09:04:29+11:00/7aeed0d936590093c6c4a827c6cd85c60ebabc0f
   [20201107p2]=2020-11-21T11:22:25-08:00/68366263fe6888d019d7a0b9cb9bf43319fc4bd7
   [20201107]=2020-11-08T07:42:58+11:00/21ad4a18fb3d4becfe566d8215eba4483b0ddc4b
@@ -122,59 +123,55 @@ PATCH_URI+="
 "
 
 ################################
+__add_pkg() {
+  THIS_PN="$1"
+  PKG_NAMES+=" ${THIS_PN}"
+}
+
+__set_pkg_property() {
+  local LOCAL_PN="${1:-${THIS_PN}}"
+  local LOCAL_VN="${LOCAL_PN//[-*\.]/_}"
+  printf -v "${LOCAL_VN}_$2" "%s" "$3"
+}
+
+################################
 ## Contents of our packages
 ################################
 # Main package
-THIS_PN="${NAME}"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_PN}_CONTENTS" "%s" "\
+__add_pkg "${NAME}"
+__set_pkg_property "" CONTENTS "\
   --exclude=*.dll \
   etc/ \
   usr/bin/ \
   usr/share/applications/ \
   usr/share/metainfo/ \
 "
-printf -v "${THIS_PN}_REQUIRES" "%s" "\
-"
 
 ################################
 # Runtime libraries
-THIS_PN="lib${NAME}${ABI}"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (runtime)"
-printf -v "${THIS_VN}_CONTENTS" "%s" "\
+__add_pkg "lib${NAME}${ABI}"
+__set_pkg_property "" SUMMARY "${SUMMARY% *} (runtime)"
+__set_pkg_property "" CONTENTS "\
   usr/bin/*.dll \
 "
-printf -v "${THIS_VN}_REQUIRES" "%s" "\
+__set_pkg_property "" REQUIRES "\
   ${NAME}-common \
 "
 
 ################################
 # Devel
-THIS_PN="lib${NAME}-devel"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (devel)"
-printf -v "${THIS_VN}_CONTENTS" "%s" "\
+__add_pkg "lib${NAME}-devel"
+__set_pkg_property "" SUMMARY "${SUMMARY% *} (devel)"
+__set_pkg_property "" CONTENTS "\
   usr/include/fontforge/ \
   usr/lib/lib* \
-"
-printf -v "${THIS_VN}_REQUIRES" "%s" "\
 "
 
 ################################
 # Common files (noarch)
-THIS_PN="${NAME}-common"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (common files)"
-printf -v "${THIS_VN}_CONTENTS" "%s" "\
+__add_pkg "${NAME}-common"
+__set_pkg_property "" SUMMARY "${SUMMARY% *} (common files)"
+__set_pkg_property "" CONTENTS "\
   usr/share/fontforge/ \
   usr/share/icons/ \
   usr/share/locale/ \
@@ -185,46 +182,51 @@ printf -v "${THIS_VN}_CONTENTS" "%s" "\
 
 ################################
 # Documents (noarch)
-THIS_PN="${NAME}-doc"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (doc)"
-printf -v "${THIS_VN}_CONTENTS" "%s" "\
+__add_pkg "${NAME}-doc"
+__set_pkg_property "" SUMMARY "${SUMMARY% *} (doc)"
+__set_pkg_property "" CONTENTS "\
   usr/share/doc/${NAME}/ \
 "
 
 ################################
 # Python bindings
-THIS_PN="python${PY_VER_SHORT}-${NAME}"
-THIS_VN=${THIS_PN//-/_}
-PKG_NAMES+=" ${THIS_PN}"
-
-printf -v "${THIS_VN}_SUMMARY"  "%s" "${SUMMARY% *} (Python ${PY_VER} bindings)"
-printf -v "${THIS_VN}_CONTENTS" "%s" "\
+__add_pkg "python${PY_VER_SHORT}-${NAME}"
+__set_pkg_property "" SUMMARY "${SUMMARY% *} (Python ${PY_VER} bindings)"
+__set_pkg_property "" CONTENTS "\
   usr/lib/python${PY_VER}/ \
-"
-printf -v "${THIS_VN}_REQUIRES" "%s" "\
 "
 
 ################################
 # Based on /usr/share/cygport/cygclass/cmake.cygclass
 src_compile() {
-	cd ${B}
-	: ${CYGCMAKE_GENERATOR=Ninja}
-	cygcmake
-	if [ -f build.ninja ]
-	then
-		# Modify '-R/usr/lib' to '-Wl,R/usr/lib' in build.ninja:
-		# >>> LINK_FLAGS = -Wl,--export-all-symbols -R/usr/lib
-		sed -e 's+\([ \t]\)\(-R/usr/lib\)+\1-Wl,\2+'\
-			< build.ninja > build.ninja.tmp
-		diff -u build.ninja build.ninja.tmp
-		mv build.ninja.tmp build.ninja
-		cygninja
-	else
-		cygmake
-	fi
+  cd ${B}
+  : ${CYGCMAKE_GENERATOR=Ninja}
+  cygcmake
+  if [ -f build.ninja ]
+  then
+    # Modify '-R/usr/lib' to '-Wl,R/usr/lib' in build.ninja:
+    # >>> LINK_FLAGS = -Wl,--export-all-symbols -R/usr/lib
+    sed -e 's+\([ \t]\)\(-R/usr/lib\)+\1-Wl,\2+'\
+      < build.ninja > build.ninja.tmp
+    diff -u build.ninja build.ninja.tmp
+    mv build.ninja.tmp build.ninja
+    cygninja
+  else
+    cygmake
+  fi
+}
+
+################################
+# Test
+src_test() {
+  if [ -x "/usr/bin/cygfontforge-${ABI}.dll" ]; then
+    warning "Tests might fail: ${B}/bin/cygfontforge-${ABI}.dll does not override /usr/bin/cygfontforge-${ABI}.dll"
+    warning "Rename /usr/bin/cygfontforge-${ABI}.dll to a different name while testing..."
+  fi
+  cd ${B}
+  PYTHONPATH="${B}/lib" \
+  PATH="${B}/bin:/usr/bin" \
+  ctest
 }
 
 ################################
