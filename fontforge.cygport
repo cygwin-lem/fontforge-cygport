@@ -181,7 +181,6 @@ __set_pkg_property "" CONTENTS "\
   usr/share/locale/ \
   usr/share/man/ \
   usr/share/mime/ \
-  usr/share/pixmaps/ \
 "
 
 ################################
