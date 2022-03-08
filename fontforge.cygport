@@ -78,6 +78,7 @@ BUILD_REQUIRES="\
   libtool\
   ninja\
 \
+  gettext-devel\
   libreadline-devel\
   libintl-devel\
   libxml2-devel\
