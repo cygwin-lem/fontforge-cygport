@@ -83,7 +83,6 @@ BUILD_REQUIRES="\
   libxml2-devel\
 \
   libiconv-devel\
-  libuninameslist-devel\
   zlib-devel\
   libbrotli-devel\
   libwoff2-devel\
