@@ -15,7 +15,7 @@ another."
 HOMEPAGE="https://fontforge.org/"
 
 ################################
-PY_VER=3.8
+PY_VER=3.9
 PY_VER_SHORT=${PY_VER//./}
 PY_VER_MAJOR=${PY_VER%%.*}
 
@@ -106,10 +106,10 @@ BUILD_REQUIRES="\
   libpango1.0-devel\
   libzmq-devel\
 \
-  python38-devel\
-  python38-zmq\
-  python38-sphinx\
-  python38-alabaster \
+  python39-devel\
+  python39-zmq\
+  python39-sphinx\
+  python39-alabaster \
 "
 ################################
 ## Patch files
