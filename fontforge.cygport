@@ -108,6 +108,10 @@ BUILD_REQUIRES="\
   python39-devel\
   python39-zmq\
   python39-sphinx\
+  python39-sphinxcontrib-applehelp\
+  python39-sphinxcontrib-devhelp\
+  python39-sphinxcontrib-htmlhelp\
+  python39-sphinxcontrib-qthelp\
   python39-alabaster \
 "
 ################################
