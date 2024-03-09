@@ -1,5 +1,5 @@
 NAME=fontforge
-VERSION=20230101
+VERSION=20230101p30
 RELEASE=1
 
 ################################
@@ -26,6 +26,7 @@ PY_VER_MAJOR=${PY_VER%%.*}
 GIT_REPO="https://github.com/fontforge/fontforge"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log --date=iso-strict --format='%cd/%H' -1
+  [20230101p30]=2024-03-03T22:39:57-08:00/996409017bc1ae953a86a4c4dd6fa7941ec1d278
   [20230101]=2023-01-01T16:25:21+11:00/20230101
   [20220308]=2022-03-08T21:14:24+11:00/20220308
   [20201107p33]=2021-02-06T14:25:17-05:00/b217f479a4bf23c0467b6c77cac5a8eb7e949ea5
@@ -127,8 +128,6 @@ PATCH_URI=$(\
 )
 # Additional patches, if any
 PATCH_URI+="
-  https://src.fedoraproject.org/rpms/fontforge/raw/f40/f/Fix_Splinefont_shell_invocation.patch\
-  https://github.com/wolfi-dev/os/commit/1881af108daa642aa5bf318edf122c225cded33c.patch
 "
 
 ################################
