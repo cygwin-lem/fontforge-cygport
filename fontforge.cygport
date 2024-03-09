@@ -13,6 +13,7 @@ truetype, opentype, cid-keyed, multi-master, cff, svg and bitmap (bdf, FON,
 NFNT) fonts, or edit existing ones. Also lets you convert one format to
 another."
 HOMEPAGE="https://fontforge.org/"
+LICENSE="GPL-3.0-or-later"
 
 ################################
 PY_VER=3.9
