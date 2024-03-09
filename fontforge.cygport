@@ -127,6 +127,8 @@ PATCH_URI=$(\
 )
 # Additional patches, if any
 PATCH_URI+="
+  https://src.fedoraproject.org/rpms/fontforge/raw/f40/f/0001-Fix-errors-in-French-and-Italian-translations.patch\
+  https://src.fedoraproject.org/rpms/fontforge/raw/f40/f/Fix_Splinefont_shell_invocation.patch\
 "
 
 ################################
