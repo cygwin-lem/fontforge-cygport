@@ -212,6 +212,13 @@ __set_pkg_property "" CONTENTS "\
 src_compile() {
   cd ${B}
   : ${CYGCMAKE_GENERATOR=Ninja}
+
+  # Workaroung failure of "pkg-config --libs gtkmm-3.0"
+  # Copy pkgconfig cairomm-1.16.pc as cairomm-1.0.pc
+  mkdir -p ./pkgconfig/
+  cp "$(find /usr/lib/pkgconfig -name 'cairomm-1.*.pc' | sort -Vr | head -1)" ./pkgconfig/cairomm.1.0.pc
+  # TODO:  use the .pc file appropriately...
+
   cygcmake
   if [ -f build.ninja ]
   then
