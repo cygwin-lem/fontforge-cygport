@@ -1,0 +1,25 @@
+From a0c8603043c11339709aeb40e8d04714eea9a467 Mon Sep 17 00:00:00 2001
+From: Lemures Lemniscati <lemures.lemniscati@gmail.com>
+Date: Sun, 7 Dec 2025 13:04:03 +0900
+Subject: [PATCH] fontforge-20251009 requires gtkmm-3.0>=3.24
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7280ea8ad..c10d6cf2b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -129,7 +129,7 @@ if(ENABLE_GUI)
+   find_package(GDK3 3.10 REQUIRED)
+   find_package(PkgConfig)
+   pkg_check_modules(GTK3 REQUIRED IMPORTED_TARGET gtk+-3.0)
+-  pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET  gtkmm-3.0)
++  pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET  gtkmm-3.0>=3.24) # Required for 20251009
+   find_package(PkgConfig)
+   if (ENABLE_HARFBUZZ)
+     pkg_check_modules(HarfBuzz REQUIRED IMPORTED_TARGET harfbuzz)
+-- 
+2.51.0
+
