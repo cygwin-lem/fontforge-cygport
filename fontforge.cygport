@@ -74,6 +74,9 @@ CYGCMAKE_ARGS+="
 ################################
 ## Requirements for building
 ################################
+# fontforge 20251009:
+#   libcairomm1.0-devel (1.12.0) < 1.16
+#   libgtkmm-3.0-devel >= 3.24
 BUILD_REQUIRES="\
   pkg-config\
   cygwin-devel\
@@ -108,7 +111,6 @@ BUILD_REQUIRES="\
   libgtkmm3.0-devel\
   libglib2.0-devel\
   libcairo-devel\
-  libcairomm1.0-devel\
   libpango1.0-devel\
   libpangomm1.4-devel\
   libzmq-devel\
@@ -212,12 +214,6 @@ __set_pkg_property "" CONTENTS "\
 src_compile() {
   cd ${B}
   : ${CYGCMAKE_GENERATOR=Ninja}
-
-  # Workaroung failure of "pkg-config --libs gtkmm-3.0"
-  # Copy pkgconfig cairomm-1.16.pc as cairomm-1.0.pc
-  mkdir -p ./pkgconfig/
-  cp "$(find /usr/lib/pkgconfig -name 'cairomm-1.*.pc' | sort -Vr | head -1)" ./pkgconfig/cairomm.1.0.pc
-  # TODO:  use the .pc file appropriately...
 
   cygcmake
   if [ -f build.ninja ]
