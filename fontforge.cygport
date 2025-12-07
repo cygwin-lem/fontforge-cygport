@@ -105,8 +105,12 @@ BUILD_REQUIRES="\
   libXi-devel\
 \
   libgtk3-devel\
+  libgtkmm3.0-devel\
   libglib2.0-devel\
+  libcairo-devel\
+  libcairomm1.0-devel\
   libpango1.0-devel\
+  libpangomm1.4-devel\
   libzmq-devel\
 \
   python39-devel\
